@@ -1,0 +1,33 @@
+[project]
+name = "shellwise-router"
+version = "0.1.0"
+description = "Two-stage tool router for shellwise: Laya picks a bucket, then a tool within it"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "laya>=0.4",
+]
+
+[project.scripts]
+shellwise-build-catalog = "shellwise_router.build_catalog:main"
+shellwise-route = "shellwise_router.cli:main"
+shellwise-eval-router = "shellwise_router.evaluate:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["shellwise_router"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

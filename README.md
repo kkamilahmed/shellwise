@@ -12,6 +12,7 @@ Grammar-constrained decoding guarantees every output is a valid command, and a p
 | --- | --- |
 | `training/` | Python package: dataset build, LoRA fine-tune, evaluation, export (uv project) |
 | `data/` | Built `train/val/test.jsonl` (gitignored) and the committed `manifest.json` |
+| `router/` | Python package: two-stage tool router built on Laya, plus the tool catalog (uv project) |
 | `engine/` | Rust inference engine (not started yet) |
 
 ## Training pipeline
@@ -37,6 +38,29 @@ It picks CUDA, then MPS, then CPU, and uses bf16 only on CUDA.
 
 `shellwise-export` merges the adapter into the base weights and writes fp16 safetensors plus `tokenizer.json`.
 This directory is the engine's input. Quantisation to 4-bit happens on the engine side.
+
+## Tool router
+
+Picking the right tool is the hardest part of the translation, so it is a separate step.
+The router uses [Laya](https://github.com/NandhaKishorM/laya), a local non-autoregressive decision model that answers typed multiple-choice questions in one forward pass with calibrated confidence.
+
+Routing is two Laya calls.
+The first picks one of 13 buckets such as files, text, network or process.
+The second picks a tool among that bucket's common tools, with an explicit "other" option so the router can abstain.
+Both answers carry a confidence, and below a threshold the request falls through to the language model's free generation.
+
+The catalog in `router/catalog.json` lists every executable on a stock macOS install plus the zsh builtins, 1,341 tools in all, each with its man-page one-liner and a bucket.
+Buckets come from a curated table for the roughly 350 tools people actually type, then keyword rules on the description, then a default of `internal` for daemons and helpers.
+Only tools marked `common` are offered in stage two.
+A plugin registers a tool by adding it to the catalog with a description, which is also how the long tail becomes routable without retraining anything.
+
+```sh
+cd router
+uv sync
+uv run shellwise-build-catalog --out catalog.json --train ../data/train.jsonl
+uv run shellwise-route "is there anything running on port 3000"
+uv run shellwise-eval-router --data ../data/test.jsonl --per-tool 8
+```
 
 ## Prompt format
 
