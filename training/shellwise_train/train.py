@@ -16,7 +16,13 @@ from pathlib import Path
 import torch
 from peft import LoraConfig, get_peft_model
 from torch.utils.data import Dataset
-from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    Trainer,
+    TrainerCallback,
+    TrainingArguments,
+)
 
 from .common import pick_device, pick_dtype, read_jsonl
 from .prompt import render_completion, render_prompt
@@ -36,8 +42,8 @@ class Config:
     rank: int = 16
     alpha: int = 32
     dropout: float = 0.05
-    batch: int = 16
-    grad_accum: int = 1
+    batch: int = 8
+    grad_accum: int = 2
     max_len: int = 192
     max_steps: int = -1
     limit: int | None = None
@@ -73,11 +79,19 @@ class PairDataset(Dataset):
 
 
 class Collator:
-    def __init__(self, pad_id: int):
+    """Right-pads to a multiple of ``pad_to`` so the allocator sees few distinct shapes.
+
+    On MPS every new tensor shape grows the cached pool, and length-grouped
+    batches would otherwise produce a different shape on almost every step.
+    """
+
+    def __init__(self, pad_id: int, pad_to: int = 32):
         self.pad_id = pad_id
+        self.pad_to = pad_to
 
     def __call__(self, batch: list[dict[str, list[int]]]) -> dict[str, torch.Tensor]:
-        width = max(len(b["input_ids"]) for b in batch)
+        longest = max(len(b["input_ids"]) for b in batch)
+        width = math.ceil(longest / self.pad_to) * self.pad_to
         ids = torch.full((len(batch), width), self.pad_id, dtype=torch.long)
         labels = torch.full((len(batch), width), -100, dtype=torch.long)
         mask = torch.zeros((len(batch), width), dtype=torch.long)
@@ -87,6 +101,17 @@ class Collator:
             labels[i, :n] = torch.tensor(b["labels"])
             mask[i, :n] = 1
         return {"input_ids": ids, "labels": labels, "attention_mask": mask}
+
+
+class ReleaseMpsCache(TrainerCallback):
+    """Hand cached MPS blocks back to the OS so the process stays inside physical RAM."""
+
+    def __init__(self, every: int = 10):
+        self.every = every
+
+    def on_step_end(self, args, state, control, **kwargs):
+        if torch.backends.mps.is_available() and state.global_step % self.every == 0:
+            torch.mps.empty_cache()
 
 
 def run(cfg: Config) -> None:
@@ -149,6 +174,7 @@ def run(cfg: Config) -> None:
         train_dataset=train_ds,
         eval_dataset=val_ds,
         data_collator=Collator(tokenizer.pad_token_id),
+        callbacks=[ReleaseMpsCache()],
     )
     trainer.train()
 
