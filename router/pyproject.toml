@@ -11,6 +11,8 @@ dependencies = [
 shellwise-build-catalog = "shellwise_router.build_catalog:main"
 shellwise-route = "shellwise_router.cli:main"
 shellwise-eval-router = "shellwise_router.evaluate:main"
+shellwise-build-router-data = "shellwise_router.build_finetune_data:main"
+shellwise-finetune-router = "shellwise_router.finetune:main"
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6"]

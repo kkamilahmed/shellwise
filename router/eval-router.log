@@ -1,3 +1,91 @@
 Fetching 5 files:   0%|          | 0/5 [00:00<?, ?it/s]Fetching 5 files: 100%|██████████| 5/5 [00:00<00:00, 1625.45it/s]
 /Users/kkamil/Desktop/vault/projects/shellwise/router/.venv/lib/python3.12/site-packages/laya/agent.py:2144: RuntimeWarning: laya: this checkpoint ships invalid temperatures or values outside [0.5, 5]; using choice:11+=0.10058280825614929 -> 0.5. Treat confidence from the affected entries as uncalibrated.
   return Agent(model_id_or_path, device=device, token=token, subfolder=subfolder, fast=fast,
+evaluating 405 rows over 136 reference tools
+  1/405  bucket 0.00  tool 0.00  2/405  bucket 0.00  tool 0.00  3/405  bucket 0.00  tool 0.00  4/405  bucket 0.25  tool 0.25  5/405  bucket 0.40  tool 0.20  6/405  bucket 0.33  tool 0.17  7/405  bucket 0.29  tool 0.14  8/405  bucket 0.25  tool 0.12  9/405  bucket 0.22  tool 0.11  10/405  bucket 0.30  tool 0.20  11/405  bucket 0.27  tool 0.18  12/405  bucket 0.25  tool 0.17  13/405  bucket 0.23  tool 0.15  14/405  bucket 0.21  tool 0.14  15/405  bucket 0.27  tool 0.20  16/405  bucket 0.25  tool 0.19  17/405  bucket 0.29  tool 0.24  18/405  bucket 0.33  tool 0.28  19/405  bucket 0.32  tool 0.26  20/405  bucket 0.35  tool 0.30  21/405  bucket 0.38  tool 0.29  22/405  bucket 0.36  tool 0.27  23/405  bucket 0.35  tool 0.26  24/405  bucket 0.38  tool 0.29  25/405  bucket 0.36  tool 0.28  26/405  bucket 0.35  tool 0.27  27/405  bucket 0.33  tool 0.26  28/405  bucket 0.32  tool 0.25  29/405  bucket 0.31  tool 0.24  30/405  bucket 0.33  tool 0.27  31/405  bucket 0.32  tool 0.26  32/405  bucket 0.31  tool 0.25  33/405  bucket 0.33  tool 0.24  34/405  bucket 0.32  tool 0.24  35/405  bucket 0.31  tool 0.23  36/405  bucket 0.31  tool 0.22  37/405  bucket 0.30  tool 0.22  38/405  bucket 0.32  tool 0.21  39/405  bucket 0.33  tool 0.21  40/405  bucket 0.33  tool 0.20  41/405  bucket 0.34  tool 0.22  42/405  bucket 0.33  tool 0.21  43/405  bucket 0.35  tool 0.23  44/405  bucket 0.34  tool 0.23  45/405  bucket 0.33  tool 0.22  46/405  bucket 0.33  tool 0.22  47/405  bucket 0.32  tool 0.21  48/405  bucket 0.31  tool 0.21  49/405  bucket 0.31  tool 0.20  50/405  bucket 0.30  tool 0.20  51/405  bucket 0.31  tool 0.22  52/405  bucket 0.31  tool 0.21  53/405  bucket 0.30  tool 0.21  54/405  bucket 0.30  tool 0.20  55/405  bucket 0.31  tool 0.22  56/405  bucket 0.32  tool 0.23  57/405  bucket 0.32  tool 0.23  58/405  bucket 0.31  tool 0.22  59/405  bucket 0.31  tool 0.22  60/405  bucket 0.30  tool 0.22  61/405  bucket 0.31  tool 0.21  62/405  bucket 0.32  tool 0.23  63/405  bucket 0.32  tool 0.22  64/405  bucket 0.31  tool 0.22  65/405  bucket 0.31  tool 0.22  66/405  bucket 0.32  tool 0.21  67/405  bucket 0.33  tool 0.22  68/405  bucket 0.32  tool 0.22  69/405  bucket 0.33  tool 0.23  70/405  bucket 0.33  tool 0.23  71/405  bucket 0.34  tool 0.23  72/405  bucket 0.33  tool 0.22  73/405  bucket 0.33  tool 0.22  74/405  bucket 0.32  tool 0.22  75/405  bucket 0.32  tool 0.21  76/405  bucket 0.33  tool 0.21  77/405  bucket 0.32  tool 0.21  78/405  bucket 0.32  tool 0.21  79/405  bucket 0.32  tool 0.20  80/405  bucket 0.33  tool 0.21  81/405  bucket 0.32  tool 0.21  82/405  bucket 0.33  tool 0.22  83/405  bucket 0.33  tool 0.22  84/405  bucket 0.32  tool 0.21  85/405  bucket 0.32  tool 0.21  86/405  bucket 0.31  tool 0.21  87/405  bucket 0.31  tool 0.21  88/405  bucket 0.31  tool 0.20  89/405  bucket 0.30  tool 0.20  90/405  bucket 0.30  tool 0.20  91/405  bucket 0.30  tool 0.20  92/405  bucket 0.29  tool 0.20  93/405  bucket 0.30  tool 0.20  94/405  bucket 0.30  tool 0.20  95/405  bucket 0.29  tool 0.20  96/405  bucket 0.30  tool 0.21  97/405  bucket 0.30  tool 0.21  98/405  bucket 0.31  tool 0.20  99/405  bucket 0.30  tool 0.20  100/405  bucket 0.30  tool 0.20  101/405  bucket 0.31  tool 0.21  102/405  bucket 0.30  tool 0.21  103/405  bucket 0.30  tool 0.20  104/405  bucket 0.31  tool 0.20  105/405  bucket 0.31  tool 0.20  106/405  bucket 0.32  tool 0.20  107/405  bucket 0.33  tool 0.21  108/405  bucket 0.32  tool 0.20  109/405  bucket 0.32  tool 0.20  110/405  bucket 0.32  tool 0.20  111/405  bucket 0.32  tool 0.20  112/405  bucket 0.31  tool 0.20  113/405  bucket 0.31  tool 0.19  114/405  bucket 0.31  tool 0.19  115/405  bucket 0.31  tool 0.19  116/405  bucket 0.32  tool 0.20  117/405  bucket 0.32  tool 0.20  118/405  bucket 0.31  tool 0.19  119/405  bucket 0.31  tool 0.19  120/405  bucket 0.31  tool 0.19  121/405  bucket 0.31  tool 0.19  122/405  bucket 0.30  tool 0.19  123/405  bucket 0.30  tool 0.19  124/405  bucket 0.31  tool 0.19  125/405  bucket 0.31  tool 0.20  126/405  bucket 0.31  tool 0.20  127/405  bucket 0.31  tool 0.20  128/405  bucket 0.31  tool 0.20  129/405  bucket 0.31  tool 0.20  130/405  bucket 0.31  tool 0.20  131/405  bucket 0.31  tool 0.21  132/405  bucket 0.31  tool 0.20  133/405  bucket 0.32  tool 0.21  134/405  bucket 0.31  tool 0.21  135/405  bucket 0.31  tool 0.21  136/405  bucket 0.31  tool 0.21  137/405  bucket 0.31  tool 0.20  138/405  bucket 0.31  tool 0.20  139/405  bucket 0.32  tool 0.21  140/405  bucket 0.31  tool 0.21  141/405  bucket 0.31  tool 0.21  142/405  bucket 0.31  tool 0.20  143/405  bucket 0.31  tool 0.21  144/405  bucket 0.31  tool 0.21  145/405  bucket 0.32  tool 0.21  146/405  bucket 0.32  tool 0.21  147/405  bucket 0.32  tool 0.21  148/405  bucket 0.32  tool 0.22  149/405  bucket 0.32  tool 0.21  150/405  bucket 0.32  tool 0.21  151/405  bucket 0.32  tool 0.21  152/405  bucket 0.32  tool 0.21  153/405  bucket 0.31  tool 0.21  154/405  bucket 0.31  tool 0.21  155/405  bucket 0.32  tool 0.21  156/405  bucket 0.31  tool 0.21  157/405  bucket 0.31  tool 0.21  158/405  bucket 0.31  tool 0.21  159/405  bucket 0.31  tool 0.21  160/405  bucket 0.31  tool 0.21  161/405  bucket 0.32  tool 0.21  162/405  bucket 0.31  tool 0.21  163/405  bucket 0.31  tool 0.21  164/405  bucket 0.32  tool 0.21  165/405  bucket 0.32  tool 0.21  166/405  bucket 0.31  tool 0.20  167/405  bucket 0.32  tool 0.21  168/405  bucket 0.32  tool 0.21  169/405  bucket 0.32  tool 0.21  170/405  bucket 0.32  tool 0.22  171/405  bucket 0.32  tool 0.22  172/405  bucket 0.32  tool 0.22  173/405  bucket 0.32  tool 0.21  174/405  bucket 0.32  tool 0.21  175/405  bucket 0.32  tool 0.21  176/405  bucket 0.32  tool 0.21  177/405  bucket 0.32  tool 0.21  178/405  bucket 0.33  tool 0.22  179/405  bucket 0.32  tool 0.22  180/405  bucket 0.32  tool 0.22  181/405  bucket 0.33  tool 0.22  182/405  bucket 0.32  tool 0.22  183/405  bucket 0.33  tool 0.22  184/405  bucket 0.33  tool 0.22  185/405  bucket 0.32  tool 0.22  186/405  bucket 0.33  tool 0.22  187/405  bucket 0.33  tool 0.22  188/405  bucket 0.32  tool 0.22  189/405  bucket 0.32  tool 0.22  190/405  bucket 0.32  tool 0.22  191/405  bucket 0.32  tool 0.21  192/405  bucket 0.33  tool 0.21  193/405  bucket 0.33  tool 0.21  194/405  bucket 0.32  tool 0.21  195/405  bucket 0.32  tool 0.21  196/405  bucket 0.32  tool 0.21  197/405  bucket 0.32  tool 0.21  198/405  bucket 0.32  tool 0.21  199/405  bucket 0.33  tool 0.21  200/405  bucket 0.33  tool 0.21  201/405  bucket 0.32  tool 0.21  202/405  bucket 0.32  tool 0.21  203/405  bucket 0.32  tool 0.21  204/405  bucket 0.32  tool 0.21  205/405  bucket 0.32  tool 0.20  206/405  bucket 0.32  tool 0.20  207/405  bucket 0.32  tool 0.21  208/405  bucket 0.32  tool 0.21  209/405  bucket 0.33  tool 0.21  210/405  bucket 0.33  tool 0.21  211/405  bucket 0.33  tool 0.21  212/405  bucket 0.33  tool 0.21  213/405  bucket 0.33  tool 0.21  214/405  bucket 0.33  tool 0.21  215/405  bucket 0.33  tool 0.21  216/405  bucket 0.32  tool 0.21  217/405  bucket 0.33  tool 0.21  218/405  bucket 0.33  tool 0.21  219/405  bucket 0.32  tool 0.21  220/405  bucket 0.32  tool 0.20  221/405  bucket 0.33  tool 0.20  222/405  bucket 0.33  tool 0.20  223/405  bucket 0.33  tool 0.20  224/405  bucket 0.33  tool 0.20  225/405  bucket 0.32  tool 0.20  226/405  bucket 0.33  tool 0.20  227/405  bucket 0.33  tool 0.20  228/405  bucket 0.32  tool 0.20  229/405  bucket 0.33  tool 0.21  230/405  bucket 0.33  tool 0.20  231/405  bucket 0.32  tool 0.20  232/405  bucket 0.33  tool 0.21  233/405  bucket 0.33  tool 0.21  234/405  bucket 0.32  tool 0.21  235/405  bucket 0.32  tool 0.20  236/405  bucket 0.32  tool 0.20  237/405  bucket 0.32  tool 0.20  238/405  bucket 0.32  tool 0.20  239/405  bucket 0.32  tool 0.20  240/405  bucket 0.32  tool 0.20  241/405  bucket 0.32  tool 0.20  242/405  bucket 0.32  tool 0.20  243/405  bucket 0.32  tool 0.20  244/405  bucket 0.32  tool 0.20  245/405  bucket 0.32  tool 0.20  246/405  bucket 0.33  tool 0.21  247/405  bucket 0.33  tool 0.21  248/405  bucket 0.33  tool 0.21  249/405  bucket 0.33  tool 0.21  250/405  bucket 0.32  tool 0.21  251/405  bucket 0.33  tool 0.21  252/405  bucket 0.33  tool 0.21  253/405  bucket 0.33  tool 0.21  254/405  bucket 0.33  tool 0.21  255/405  bucket 0.33  tool 0.21  256/405  bucket 0.33  tool 0.21  257/405  bucket 0.33  tool 0.21  258/405  bucket 0.33  tool 0.21  259/405  bucket 0.32  tool 0.20  260/405  bucket 0.32  tool 0.20  261/405  bucket 0.33  tool 0.20  262/405  bucket 0.33  tool 0.20  263/405  bucket 0.33  tool 0.21  264/405  bucket 0.33  tool 0.20  265/405  bucket 0.33  tool 0.21  266/405  bucket 0.33  tool 0.21  267/405  bucket 0.33  tool 0.21  268/405  bucket 0.33  tool 0.21  269/405  bucket 0.33  tool 0.20  270/405  bucket 0.33  tool 0.21  271/405  bucket 0.33  tool 0.21  272/405  bucket 0.33  tool 0.21  273/405  bucket 0.33  tool 0.21  274/405  bucket 0.33  tool 0.21  275/405  bucket 0.33  tool 0.21  276/405  bucket 0.33  tool 0.21  277/405  bucket 0.33  tool 0.21  278/405  bucket 0.33  tool 0.21  279/405  bucket 0.33  tool 0.21  280/405  bucket 0.33  tool 0.21  281/405  bucket 0.33  tool 0.21  282/405  bucket 0.34  tool 0.21  283/405  bucket 0.34  tool 0.21  284/405  bucket 0.34  tool 0.21  285/405  bucket 0.34  tool 0.21  286/405  bucket 0.34  tool 0.21  287/405  bucket 0.34  tool 0.21  288/405  bucket 0.34  tool 0.21  289/405  bucket 0.34  tool 0.21  290/405  bucket 0.34  tool 0.21  291/405  bucket 0.34  tool 0.21  292/405  bucket 0.34  tool 0.21  293/405  bucket 0.34  tool 0.21  294/405  bucket 0.34  tool 0.21  295/405  bucket 0.34  tool 0.21  296/405  bucket 0.34  tool 0.21  297/405  bucket 0.34  tool 0.21  298/405  bucket 0.34  tool 0.20  299/405  bucket 0.33  tool 0.20  300/405  bucket 0.34  tool 0.20  301/405  bucket 0.34  tool 0.20  302/405  bucket 0.34  tool 0.21  303/405  bucket 0.34  tool 0.20  304/405  bucket 0.34  tool 0.21  305/405  bucket 0.34  tool 0.21  306/405  bucket 0.34  tool 0.21  307/405  bucket 0.34  tool 0.21  308/405  bucket 0.34  tool 0.21  309/405  bucket 0.34  tool 0.21  310/405  bucket 0.34  tool 0.21  311/405  bucket 0.34  tool 0.21  312/405  bucket 0.34  tool 0.21  313/405  bucket 0.34  tool 0.20  314/405  bucket 0.33  tool 0.20  315/405  bucket 0.33  tool 0.20  316/405  bucket 0.33  tool 0.20  317/405  bucket 0.33  tool 0.20  318/405  bucket 0.33  tool 0.20  319/405  bucket 0.33  tool 0.20  320/405  bucket 0.33  tool 0.20  321/405  bucket 0.33  tool 0.20  322/405  bucket 0.33  tool 0.20  323/405  bucket 0.33  tool 0.20  324/405  bucket 0.33  tool 0.20  325/405  bucket 0.33  tool 0.20  326/405  bucket 0.33  tool 0.20  327/405  bucket 0.33  tool 0.20  328/405  bucket 0.33  tool 0.20  329/405  bucket 0.33  tool 0.20  330/405  bucket 0.33  tool 0.20  331/405  bucket 0.33  tool 0.20  332/405  bucket 0.33  tool 0.20  333/405  bucket 0.33  tool 0.20  334/405  bucket 0.33  tool 0.19  335/405  bucket 0.33  tool 0.20  336/405  bucket 0.33  tool 0.20  337/405  bucket 0.33  tool 0.20  338/405  bucket 0.33  tool 0.20  339/405  bucket 0.33  tool 0.20  340/405  bucket 0.33  tool 0.20  341/405  bucket 0.33  tool 0.20  342/405  bucket 0.33  tool 0.20  343/405  bucket 0.33  tool 0.20  344/405  bucket 0.33  tool 0.20  345/405  bucket 0.33  tool 0.20  346/405  bucket 0.33  tool 0.20  347/405  bucket 0.33  tool 0.20  348/405  bucket 0.33  tool 0.20  349/405  bucket 0.34  tool 0.20  350/405  bucket 0.34  tool 0.20  351/405  bucket 0.34  tool 0.21  352/405  bucket 0.34  tool 0.20  353/405  bucket 0.34  tool 0.20  354/405  bucket 0.34  tool 0.20  355/405  bucket 0.34  tool 0.21  356/405  bucket 0.34  tool 0.21  357/405  bucket 0.34  tool 0.20  358/405  bucket 0.34  tool 0.20  359/405  bucket 0.33  tool 0.20  360/405  bucket 0.33  tool 0.20  361/405  bucket 0.33  tool 0.20  362/405  bucket 0.33  tool 0.20  363/405  bucket 0.33  tool 0.20  364/405  bucket 0.33  tool 0.20  365/405  bucket 0.33  tool 0.20  366/405  bucket 0.33  tool 0.20  367/405  bucket 0.33  tool 0.20  368/405  bucket 0.33  tool 0.20  369/405  bucket 0.33  tool 0.20  370/405  bucket 0.33  tool 0.20  371/405  bucket 0.33  tool 0.20  372/405  bucket 0.33  tool 0.20  373/405  bucket 0.33  tool 0.20  374/405  bucket 0.33  tool 0.20  375/405  bucket 0.33  tool 0.20  376/405  bucket 0.34  tool 0.20  377/405  bucket 0.34  tool 0.21  378/405  bucket 0.34  tool 0.21  379/405  bucket 0.34  tool 0.21  380/405  bucket 0.33  tool 0.21  381/405  bucket 0.33  tool 0.20  382/405  bucket 0.34  tool 0.20  383/405  bucket 0.33  tool 0.20  384/405  bucket 0.34  tool 0.20  385/405  bucket 0.34  tool 0.20  386/405  bucket 0.33  tool 0.20  387/405  bucket 0.33  tool 0.20  388/405  bucket 0.34  tool 0.20  389/405  bucket 0.33  tool 0.20  390/405  bucket 0.34  tool 0.20  391/405  bucket 0.34  tool 0.20  392/405  bucket 0.34  tool 0.20  393/405  bucket 0.34  tool 0.20  394/405  bucket 0.34  tool 0.20  395/405  bucket 0.34  tool 0.20  396/405  bucket 0.34  tool 0.20  397/405  bucket 0.34  tool 0.20  398/405  bucket 0.34  tool 0.20  399/405  bucket 0.34  tool 0.20  400/405  bucket 0.34  tool 0.20  401/405  bucket 0.33  tool 0.20  402/405  bucket 0.33  tool 0.20  403/405  bucket 0.33  tool 0.20  404/405  bucket 0.34  tool 0.20  405/405  bucket 0.34  tool 0.20
+{
+ "n": 405,
+ "bucket_accuracy": 0.3358,
+ "tool_accuracy": 0.1975,
+ "bucket_right_and_tool_right": 0.1975,
+ "latency_ms": {
+  "p50": 369.3,
+  "p90": 472.5
+ },
+ "per_bucket": {
+  "archive": {
+   "n": 18,
+   "bucket": 1.0,
+   "tool": 0.667
+  },
+  "data": {
+   "n": 12,
+   "bucket": 0.0,
+   "tool": 0.0
+  },
+  "dev": {
+   "n": 18,
+   "bucket": 0.611,
+   "tool": 0.5
+  },
+  "disk": {
+   "n": 5,
+   "bucket": 0.4,
+   "tool": 0.4
+  },
+  "files": {
+   "n": 87,
+   "bucket": 0.046,
+   "tool": 0.023
+  },
+  "internal": {
+   "n": 1,
+   "bucket": 0.0,
+   "tool": 0.0
+  },
+  "network": {
+   "n": 44,
+   "bucket": 0.841,
+   "tool": 0.477
+  },
+  "process": {
+   "n": 22,
+   "bucket": 0.727,
+   "tool": 0.273
+  },
+  "shell": {
+   "n": 70,
+   "bucket": 0.3,
+   "tool": 0.157
+  },
+  "system": {
+   "n": 18,
+   "bucket": 0.611,
+   "tool": 0.556
+  },
+  "text": {
+   "n": 93,
+   "bucket": 0.032,
+   "tool": 0.0
+  },
+  "users": {
+   "n": 17,
+   "bucket": 0.765,
+   "tool": 0.412
+  }
+ },
+ "top_confusions": [
+  "ifconfig -> network/other x7",
+  "echo -> dev/other x6",
+  "od -> dev/other x4",
+  "grep -> dev/other x3",
+  "ls -> system/other x3",
+  "head -> dev/other x3",
+  "diff -> dev/other x3",
+  "du -> disk/quota x3",
+  "cp -> dev/other x3",
+  "chown -> users/htpasswd x3",
+  "paste -> dev/other x3",
+  "cat -> dev/other x3"
+ ]
+}
