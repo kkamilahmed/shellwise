@@ -38,7 +38,7 @@ class Config:
     dropout: float = 0.05
     batch: int = 16
     grad_accum: int = 1
-    max_len: int = 256
+    max_len: int = 192
     max_steps: int = -1
     limit: int | None = None
     seed: int = 13
@@ -131,9 +131,9 @@ def run(cfg: Config) -> None:
         bf16=dtype == torch.bfloat16,
         logging_steps=25,
         eval_strategy="steps",
-        eval_steps=250,
+        eval_steps=500,
         save_strategy="steps",
-        save_steps=250,
+        save_steps=500,
         save_total_limit=2,
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss",
@@ -141,6 +141,7 @@ def run(cfg: Config) -> None:
         seed=cfg.seed,
         dataloader_pin_memory=device.type == "cuda",
         remove_unused_columns=False,
+        train_sampling_strategy="group_by_length",
     )
     trainer = Trainer(
         model=model,
