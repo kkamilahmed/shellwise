@@ -1,0 +1,61 @@
+{
+  "total": 30367,
+  "splits": {
+    "train": 27989,
+    "test": 1453,
+    "val": 925
+  },
+  "per_source": {
+    "nl2bash": 9149,
+    "nl2bash-custom": 4423,
+    "tldr": 9112,
+    "sysadmin-840": 700,
+    "bash-6k": 5006,
+    "linux-bash-sft": 1977
+  },
+  "dropped": {
+    "nl2bash:invalid": 133,
+    "nl2bash:duplicate": 23,
+    "nl2bash-custom:duplicate": 17881,
+    "nl2bash-custom:invalid": 2269,
+    "tldr:invalid": 23,
+    "tldr:duplicate": 52,
+    "sysadmin-840:duplicate": 140,
+    "bash-6k:duplicate": 318,
+    "bash-6k:invalid": 195,
+    "linux-bash-sft:duplicate": 1281,
+    "linux-bash-sft:invalid": 31
+  },
+  "sources": [
+    {
+      "name": "nl2bash",
+      "repo": "GWHed/nl2bash",
+      "license": "GPL-3.0 (Tellina NL2Bash corpus)"
+    },
+    {
+      "name": "nl2bash-custom",
+      "repo": "AnishJoshi/nl2bash-custom",
+      "license": "unspecified (NL2Bash derivative)"
+    },
+    {
+      "name": "tldr",
+      "repo": "neulab/tldr",
+      "license": "MIT"
+    },
+    {
+      "name": "sysadmin-840",
+      "repo": "aelhalili/bash-commands-dataset",
+      "license": "MIT"
+    },
+    {
+      "name": "bash-6k",
+      "repo": "emirkaanozdemr/bash_command_data_6K",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "linux-bash-sft",
+      "repo": "Jawajawa/command-linux-bash-balanced-sft",
+      "license": "unspecified (NL2Bash derivative)"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+# data and model artifacts
+data/*
+!data/.gitkeep
+!data/manifest.json
+outputs/
+hf-cache/
+*.safetensors
+*.bin
+*.pt
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# rust
+engine/target/
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/
