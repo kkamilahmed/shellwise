@@ -41,8 +41,9 @@ die()  { printf '\033[1;31merror:\033[0m %s\n' "$*" >&2; exit 1; }
 timed() { # timed <label> <cmd...>
   local label=$1; shift
   local start; start=$(date +%s)
+  local file; file=$(printf '%s' "$label" | tr -c 'A-Za-z0-9' '-')
   log "$label"
-  "$@" 2>&1 | tee "outputs/logs/${label// /-}.log"
+  "$@" 2>&1 | tee "outputs/logs/${file}.log"
   printf '    %s finished in %d min\n' "$label" $(( ($(date +%s) - start) / 60 ))
 }
 
