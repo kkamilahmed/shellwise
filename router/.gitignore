@@ -1,2 +1,3 @@
-eval-router.json
+eval-router*.json
+eval-router*.log
 finetune/

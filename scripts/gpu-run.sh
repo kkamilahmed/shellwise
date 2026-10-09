@@ -13,7 +13,7 @@
 #   export        merge the LoRA adapter into fp16 safetensors for the engine
 #
 # Tunables (environment variables):
-#   LLM_EPOCHS=4  LLM_BATCH=16  ROUTER_EPOCHS=4  ROUTER_MICRO_BATCH=8  ROUTER_GRAD_ACCUM=4
+#   LLM_EPOCHS=4  LLM_BATCH=8  LLM_GRAD_ACCUM=2  ROUTER_EPOCHS=4  ROUTER_MICRO_BATCH=8  ROUTER_GRAD_ACCUM=4
 #   ROUTER_ROWS=   (limit router training rows; empty = all)
 #
 # Defaults fit a 10 GB card such as an RTX 3080. With 16 GB or more, raise
@@ -32,7 +32,11 @@ cd "$ROOT"
 mkdir -p outputs/logs
 
 LLM_EPOCHS="${LLM_EPOCHS:-4}"
-LLM_BATCH="${LLM_BATCH:-16}"
+LLM_BATCH="${LLM_BATCH:-8}"
+LLM_GRAD_ACCUM="${LLM_GRAD_ACCUM:-2}"
+# Let the CUDA allocator grow segments instead of fragmenting; avoids spurious
+# cuBLAS internal errors on 10 GB cards when eval and checkpointing coincide.
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
 ROUTER_EPOCHS="${ROUTER_EPOCHS:-4}"
 ROUTER_MICRO_BATCH="${ROUTER_MICRO_BATCH:-8}"
 ROUTER_GRAD_ACCUM="${ROUTER_GRAD_ACCUM:-4}"
@@ -96,8 +100,13 @@ phase_data() {
 }
 
 phase_train_llm() {
-  timed "train LLM (LoRA, ${LLM_EPOCHS} epochs, batch ${LLM_BATCH})" bash -c \
-    "cd training && uv run shellwise-train --data ../data --out ../outputs/lora --epochs ${LLM_EPOCHS} --batch ${LLM_BATCH} --grad-accum 1"
+  local resume=""
+  if compgen -G "outputs/lora/checkpoints/checkpoint-*" >/dev/null; then
+    echo "found checkpoints in outputs/lora/checkpoints; resuming the interrupted run"
+    resume="--resume"
+  fi
+  timed "train LLM (LoRA, ${LLM_EPOCHS} epochs, batch ${LLM_BATCH}x${LLM_GRAD_ACCUM})" bash -c \
+    "cd training && uv run shellwise-train --data ../data --out ../outputs/lora --epochs ${LLM_EPOCHS} --batch ${LLM_BATCH} --grad-accum ${LLM_GRAD_ACCUM} ${resume}"
 }
 
 phase_train_router() {

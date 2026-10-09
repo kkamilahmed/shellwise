@@ -46,8 +46,10 @@ class Config:
     grad_accum: int = 2
     max_len: int = 192
     max_steps: int = -1
+    save_steps: int = 500
     limit: int | None = None
     seed: int = 13
+    resume: bool = False
 
 
 class PairDataset(Dataset):
@@ -156,9 +158,9 @@ def run(cfg: Config) -> None:
         bf16=dtype == torch.bfloat16,
         logging_steps=25,
         eval_strategy="steps",
-        eval_steps=500,
+        eval_steps=cfg.save_steps,
         save_strategy="steps",
-        save_steps=500,
+        save_steps=cfg.save_steps,
         save_total_limit=2,
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss",
@@ -176,7 +178,10 @@ def run(cfg: Config) -> None:
         data_collator=Collator(tokenizer.pad_token_id),
         callbacks=[ReleaseMpsCache()],
     )
-    trainer.train()
+    checkpoints = sorted((cfg.out / "checkpoints").glob("checkpoint-*")) if cfg.resume else []
+    if cfg.resume and not checkpoints:
+        print("no checkpoint to resume from; starting fresh")
+    trainer.train(resume_from_checkpoint=bool(checkpoints))
 
     cfg.out.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(cfg.out)
@@ -195,8 +200,12 @@ def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     defaults = Config()
     for field, value in asdict(defaults).items():
+        flag = f"--{field.replace('_', '-')}"
+        if isinstance(value, bool):
+            ap.add_argument(flag, action="store_true", default=value)
+            continue
         kind = type(getattr(defaults, field)) if value is not None else int
-        ap.add_argument(f"--{field.replace('_', '-')}", type=kind, default=value)
+        ap.add_argument(flag, type=kind, default=value)
     ns = ap.parse_args(argv)
     run(Config(**vars(ns)))
 
