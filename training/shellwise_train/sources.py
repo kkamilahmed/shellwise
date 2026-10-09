@@ -41,13 +41,6 @@ def _load_nl2bash_parquet(files: dict[str, Path]) -> Iterator[Pair]:
             yield Pair(str(nl), str(cmd), "nl2bash")
 
 
-def _load_nl2bash_custom(files: dict[str, Path]) -> Iterator[Pair]:
-    for path in files.values():
-        rows = json.loads(path.read_text(encoding="utf-8"))
-        for row in rows:
-            yield Pair(str(row["nl_command"]), str(row["bash_code"]), "nl2bash-custom")
-
-
 def _load_tldr(files: dict[str, Path]) -> Iterator[Pair]:
     for path in files.values():
         df = pd.read_json(path, lines=True)
@@ -115,13 +108,6 @@ SOURCES: tuple[Source, ...] = (
         ),
         license="GPL-3.0 (Tellina NL2Bash corpus)",
         load=_load_nl2bash_parquet,
-    ),
-    Source(
-        name="nl2bash-custom",
-        repo="AnishJoshi/nl2bash-custom",
-        files=("data/train.json", "data/dev.json", "data/test.json"),
-        license="unspecified (NL2Bash derivative)",
-        load=_load_nl2bash_custom,
     ),
     Source(
         name="tldr",

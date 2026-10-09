@@ -118,7 +118,8 @@ phase_train_router() {
 
 phase_eval() {
   [[ -d outputs/lora ]] || die "outputs/lora missing; run train-llm first"
-  timed "eval LLM on test split" bash -c "cd training && uv run shellwise-eval --adapter ../outputs/lora --data ../data --out ../outputs/eval --batch 64"
+  timed "eval LLM on test split, no hint" bash -c "cd training && uv run shellwise-eval --adapter ../outputs/lora --data ../data --out ../outputs/eval --batch 64 --hint none"
+  timed "eval LLM on test split, reference tool hint" bash -c "cd training && uv run shellwise-eval --adapter ../outputs/lora --data ../data --out ../outputs/eval --batch 64 --hint reference"
   if [[ -d outputs/laya-router ]]; then
     timed "eval router on test split" bash -c "cd router && uv run shellwise-eval-router --data ../data/test.jsonl --catalog catalog.json --per-tool 8 --model ../outputs/laya-router --out ../outputs/eval-router.json"
   else
@@ -147,4 +148,4 @@ for phase in "$@"; do
     *)            die "unknown phase: $phase (see --help)" ;;
   esac
 done
-log "done. results: outputs/eval/metrics-test.json and outputs/eval-router.json"
+log "done. results: outputs/eval/metrics-test-*.json and outputs/eval-router.json"

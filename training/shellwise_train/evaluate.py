@@ -2,6 +2,9 @@
 
 Usage: ``shellwise-eval --adapter ../outputs/lora --data ../data``
 Pass ``--adapter`` for a LoRA directory or ``--merged`` for an exported model.
+``--hint reference`` adds each row's own tool as the ``tool:`` line, which
+measures the model with a perfect router; ``--hint none`` (default) measures
+it alone.
 """
 
 from __future__ import annotations
@@ -37,10 +40,22 @@ def load_model(base: str, adapter: Path | None, merged: Path | None, device, dty
 
 
 @torch.no_grad()
-def generate(tok, model, nls: list[str], max_new_tokens: int, batch: int, device) -> list[str]:
+def generate(
+    tok,
+    model,
+    nls: list[str],
+    max_new_tokens: int,
+    batch: int,
+    device,
+    tools: list[str | None] | None = None,
+) -> list[str]:
+    tools = tools or [None] * len(nls)
     outs: list[str] = []
     for i in range(0, len(nls), batch):
-        prompts = [render_prompt(tok, nl) for nl in nls[i : i + batch]]
+        prompts = [
+            render_prompt(tok, nl, tool)
+            for nl, tool in zip(nls[i : i + batch], tools[i : i + batch], strict=True)
+        ]
         enc = tok(prompts, return_tensors="pt", padding=True, add_special_tokens=False).to(device)
         gen = model.generate(
             **enc,
@@ -84,6 +99,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--limit", type=int)
     ap.add_argument("--batch", type=int, default=32)
     ap.add_argument("--max-new-tokens", type=int, default=96)
+    ap.add_argument("--hint", choices=["none", "reference"], default="none")
     args = ap.parse_args(argv)
 
     device = pick_device()
@@ -92,13 +108,18 @@ def main(argv: list[str] | None = None) -> None:
     print(f"evaluating {len(rows)} rows on {device}")
 
     t0 = time.time()
-    preds = generate(tok, model, [r["nl"] for r in rows], args.max_new_tokens, args.batch, device)
+    tools = [r.get("tool") for r in rows] if args.hint == "reference" else None
+    preds = generate(
+        tok, model, [r["nl"] for r in rows], args.max_new_tokens, args.batch, device, tools
+    )
     elapsed = time.time() - t0
 
     report = score(rows, preds)
     report["seconds"] = round(elapsed, 1)
+    report["hint"] = args.hint
     args.out.mkdir(parents=True, exist_ok=True)
-    with (args.out / f"predictions-{args.split}.jsonl").open("w", encoding="utf-8") as fh:
+    tag = f"{args.split}-{args.hint}"
+    with (args.out / f"predictions-{tag}.jsonl").open("w", encoding="utf-8") as fh:
         for row, pred in zip(rows, preds, strict=True):
             fh.write(
                 json.dumps(
@@ -111,7 +132,7 @@ def main(argv: list[str] | None = None) -> None:
                 )
                 + "\n"
             )
-    (args.out / f"metrics-{args.split}.json").write_text(
+    (args.out / f"metrics-{tag}.json").write_text(
         json.dumps(report, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(report, indent=2))

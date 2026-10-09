@@ -8,6 +8,9 @@ import shlex
 PLACEHOLDER_RE = re.compile(r"\{\{(.*?)\}\}")
 # A bare ``\`` token is never valid shell; it shows up where a source corpus lost ``\(``.
 LONE_BACKSLASH_RE = re.compile(r"(^|\s)\\(\s|$)")
+# A ``$`` followed by whitespace or end of line, outside quotes, is a command
+# substitution whose ``(...)`` a source corpus stripped: ``cd $``, ``arr=$``.
+DANGLING_DOLLAR_RE = re.compile(r"""(^|[^"'\\])\$(\s|$)""")
 MAX_CMD_CHARS = 200
 MAX_NL_CHARS = 300
 MIN_NL_WORDS = 2
@@ -94,10 +97,29 @@ def is_valid_pair(nl: str, cmd: str) -> bool:
         return False
     if cmd.startswith("#") or "{{" in cmd:
         return False
-    if not cmd.isascii() or LONE_BACKSLASH_RE.search(cmd):
+    if not cmd.isascii() or LONE_BACKSLASH_RE.search(cmd) or DANGLING_DOLLAR_RE.search(cmd):
         return False
     try:
         shlex.split(cmd)
     except ValueError:
         return False
     return True
+
+
+def first_utility(cmd: str) -> str | None:
+    """The program a command line runs first: ``sudo lsof -i :3000`` -> ``lsof``.
+
+    Skips ``sudo`` and leading ``NAME=value`` assignments. Returns None when the
+    line does not tokenise.
+    """
+    try:
+        toks = shlex.split(normalize_cmd(cmd))
+    except ValueError:
+        return None
+    for tok in toks:
+        if tok == "sudo":
+            continue
+        if "=" in tok and tok.split("=", 1)[0].isidentifier():
+            continue
+        return tok
+    return None

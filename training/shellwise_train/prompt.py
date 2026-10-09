@@ -11,17 +11,30 @@ SYSTEM_PROMPT = (
 )
 
 
-def build_messages(nl: str) -> list[dict[str, str]]:
+def build_user_turn(nl: str, tool: str | None = None) -> str:
+    """The user message: an optional ``tool:`` line from the router, then the request.
+
+    The ``request:`` prefix is always present so the layout is identical with and
+    without a hint; only the tool line comes and goes.
+    """
+    lines = []
+    if tool:
+        lines.append(f"tool: {tool.strip()}")
+    lines.append(f"request: {nl.strip()}")
+    return "\n".join(lines)
+
+
+def build_messages(nl: str, tool: str | None = None) -> list[dict[str, str]]:
     return [
         {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": nl.strip()},
+        {"role": "user", "content": build_user_turn(nl, tool)},
     ]
 
 
-def render_prompt(tokenizer, nl: str) -> str:
+def render_prompt(tokenizer, nl: str, tool: str | None = None) -> str:
     """Chat-templated prompt ending right where the assistant's reply starts."""
     return tokenizer.apply_chat_template(
-        build_messages(nl), tokenize=False, add_generation_prompt=True
+        build_messages(nl, tool), tokenize=False, add_generation_prompt=True
     )
 
 

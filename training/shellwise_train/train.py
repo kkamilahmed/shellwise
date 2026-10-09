@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import random
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -29,6 +30,13 @@ from .prompt import render_completion, render_prompt
 
 DEFAULT_MODEL = "Qwen/Qwen2.5-0.5B-Instruct"
 LORA_TARGETS = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+# How often a training example carries the ``tool:`` hint the router would add.
+# Most rows see it so the model learns to follow it; some do not, so it still
+# works when the router abstains. tldr descriptions are unanswerable without
+# their tool, so they always get it.
+HINT_RATE_DEFAULT = 0.7
+HINT_RATE_BY_SOURCE = {"tldr": 1.0}
 
 
 @dataclass
@@ -52,14 +60,20 @@ class Config:
     resume: bool = False
 
 
+def hint_for(row: dict, rng: random.Random) -> str | None:
+    rate = HINT_RATE_BY_SOURCE.get(row.get("source", ""), HINT_RATE_DEFAULT)
+    tool = row.get("tool")
+    return tool if tool and rng.random() < rate else None
+
+
 class PairDataset(Dataset):
-    def __init__(self, rows: list[dict], tokenizer, max_len: int):
+    def __init__(self, rows: list[dict], tokenizer, max_len: int, seed: int = 0):
         self.items = []
         truncated = 0
+        rng = random.Random(seed)
         for row in rows:
-            prompt_ids = tokenizer(render_prompt(tokenizer, row["nl"]), add_special_tokens=False)[
-                "input_ids"
-            ]
+            prompt = render_prompt(tokenizer, row["nl"], hint_for(row, rng))
+            prompt_ids = tokenizer(prompt, add_special_tokens=False)["input_ids"]
             completion_ids = tokenizer(
                 render_completion(tokenizer, row["cmd"]), add_special_tokens=False
             )["input_ids"]
@@ -137,8 +151,8 @@ def run(cfg: Config) -> None:
 
     train_rows = read_jsonl(cfg.data / "train.jsonl", cfg.limit)
     val_rows = read_jsonl(cfg.data / "val.jsonl", cfg.limit)
-    train_ds = PairDataset(train_rows, tokenizer, cfg.max_len)
-    val_ds = PairDataset(val_rows, tokenizer, cfg.max_len)
+    train_ds = PairDataset(train_rows, tokenizer, cfg.max_len, seed=cfg.seed)
+    val_ds = PairDataset(val_rows, tokenizer, cfg.max_len, seed=cfg.seed + 1)
     print(f"train={len(train_ds)} val={len(val_ds)}")
 
     steps_per_epoch = math.ceil(len(train_ds) / (cfg.batch * cfg.grad_accum))

@@ -2,9 +2,12 @@
 
 Usage: ``shellwise-build-data --out ../data``
 
-Dedup is on (nl key, normalised cmd). Splits are assigned by hashing the NL
+Dedup is on (nl key, normalised cmd). Rows from NL2Bash derivatives whose
+command already appears in NL2Bash itself are dropped too, since those mirrors
+mix paraphrases with misaligned pairs. Splits are assigned by hashing the NL
 key, so the same request can never appear in two splits even with different
-reference commands.
+reference commands. Each row carries ``tool``, the first utility of the
+command, which training uses as the router hint.
 """
 
 from __future__ import annotations
@@ -16,8 +19,11 @@ import random
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from .normalize import is_valid_pair, nl_key, normalize_cmd, normalize_nl
+from .normalize import first_utility, is_valid_pair, nl_key, normalize_cmd, normalize_nl
 from .sources import SOURCES, Pair, download
+
+# Sources that re-publish NL2Bash pairs; a command seen in nl2bash is a repeat here.
+DERIVATIVE_SOURCES = {"linux-bash-sft"}
 
 
 def _split_for(key: str, val_frac: float, test_frac: float, seed: int) -> str:
@@ -33,21 +39,27 @@ def _split_for(key: str, val_frac: float, test_frac: float, seed: int) -> str:
 def collect(cache_dir: Path, only: set[str] | None = None) -> tuple[list[Pair], Counter]:
     dropped: Counter = Counter()
     seen: set[tuple[str, str]] = set()
+    nl2bash_cmds: set[str] = set()
     kept: list[Pair] = []
-    for source in SOURCES:
+    for source in SOURCES:  # SOURCES lists nl2bash before its derivatives
         if only and source.name not in only:
             continue
         files = download(source, cache_dir)
         for pair in source.load(files):
             nl, cmd = normalize_nl(pair.nl), normalize_cmd(pair.cmd)
-            if not is_valid_pair(nl, cmd):
+            if not is_valid_pair(nl, cmd) or first_utility(cmd) is None:
                 dropped[f"{source.name}:invalid"] += 1
                 continue
             key = (nl_key(nl), cmd)
             if key in seen:
                 dropped[f"{source.name}:duplicate"] += 1
                 continue
+            if source.name in DERIVATIVE_SOURCES and cmd in nl2bash_cmds:
+                dropped[f"{source.name}:nl2bash-repeat"] += 1
+                continue
             seen.add(key)
+            if source.name == "nl2bash":
+                nl2bash_cmds.add(cmd)
             kept.append(Pair(nl, cmd, source.name))
     return kept, dropped
 
@@ -73,7 +85,8 @@ def main(argv: list[str] | None = None) -> None:
         rng.shuffle(rows)
         with (args.out / f"{name}.jsonl").open("w", encoding="utf-8") as fh:
             for p in rows:
-                fh.write(json.dumps({"nl": p.nl, "cmd": p.cmd, "source": p.source}) + "\n")
+                row = {"nl": p.nl, "cmd": p.cmd, "source": p.source, "tool": first_utility(p.cmd)}
+                fh.write(json.dumps(row) + "\n")
 
     manifest = {
         "total": len(pairs),

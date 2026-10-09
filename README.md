@@ -46,14 +46,18 @@ uv run shellwise-eval --adapter ../outputs/lora --data ../data
 uv run shellwise-export --adapter ../outputs/lora --out ../outputs/merged
 ```
 
-`shellwise-build-data` downloads six public NL-to-shell corpora, normalises them, drops anything that is not a single parseable command line, dedups on (request, command), and hashes the request text into splits so the same request can never leak across them.
-The result is about 30K pairs. Sources and licenses are listed in `data/manifest.json`.
+`shellwise-build-data` downloads five public NL-to-shell corpora, normalises them, drops anything that is not a single parseable command line, dedups on (request, command), and hashes the request text into splits so the same request can never leak across them.
+Each row also carries `tool`, the first utility of its command, which training uses as the router hint.
+The result is about 25K pairs. Sources and licenses are listed in `data/manifest.json`.
 
 `shellwise-train` fine-tunes `Qwen/Qwen2.5-0.5B-Instruct` with LoRA rank 16 on all attention and MLP projections.
 Loss is masked to the assistant turn only.
+70% of examples carry the `tool:` hint the router would provide, so the model learns to follow it, and 30% do not, so it still works when the router abstains.
+tldr rows always carry it because their descriptions are unanswerable without the tool.
 It picks CUDA, then MPS, then CPU, and uses bf16 only on CUDA.
 
 `shellwise-eval` greedy-decodes the test split and reports two accuracies: `exact` (normalised string match) and `structural` (same utilities in the same order with the same flag sets, argument values ignored).
+`--hint reference` feeds each row's own tool as the hint, which measures the model under a perfect router; the default measures it alone.
 
 `shellwise-export` merges the adapter into the base weights and writes fp16 safetensors plus `tokenizer.json`.
 This directory is the engine's input. Quantisation to 4-bit happens on the engine side.
@@ -89,10 +93,12 @@ The engine must reproduce this exactly. It is defined once in `training/shellwis
 <|im_start|>system
 You translate natural language into a single POSIX shell command. Reply with only the command.<|im_end|>
 <|im_start|>user
-{request}<|im_end|>
+tool: {tool}
+request: {request}<|im_end|>
 <|im_start|>assistant
 ```
 
+The `tool:` line is present when the router is confident and omitted when it abstains; the `request:` prefix is always there.
 The model emits the command followed by `<|im_end|>`.
 
 ## Development

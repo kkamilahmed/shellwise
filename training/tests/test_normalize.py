@@ -1,5 +1,6 @@
 from shellwise_train.normalize import (
     clean_completion,
+    first_utility,
     is_valid_pair,
     nl_key,
     normalize_cmd,
@@ -56,3 +57,19 @@ def test_strip_trailing_output_respects_quotes():
     assert strip_trailing_output('printf "a\\nb"') == 'printf "a\\nb"'
     assert strip_trailing_output("openssl rand -hex 8\\nA9f3kLmP") == "openssl rand -hex 8"
     assert strip_trailing_output("df -h\\n Filesystem Size") == "df -h"
+
+
+def test_first_utility_skips_sudo_and_assignments():
+    assert first_utility("sudo lsof -i :3000") == "lsof"
+    assert first_utility("FOO=1 BAR=2 make all") == "make"
+    assert first_utility("find . -name x | wc -l") == "find"
+    assert first_utility("echo 'unterminated") is None
+
+
+def test_rejects_truncated_command_substitution():
+    assert not is_valid_pair("Change dir", "cd $")
+    assert not is_valid_pair("Set var", "arr=$")
+    assert not is_valid_pair("Find", "find $ -type f")
+    assert is_valid_pair("Print path", "echo $PATH")
+    assert is_valid_pair("Regex anchor", "grep 'foo$' file")
+    assert is_valid_pair("Substitution kept", "echo $(date)")
