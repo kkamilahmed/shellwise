@@ -29,7 +29,7 @@ def pick_dtype(device: torch.device) -> torch.dtype:
 
 def read_jsonl(path: Path, limit: int | None = None) -> list[dict]:
     rows: list[dict] = []
-    with path.open() as fh:
+    with path.open(encoding="utf-8") as fh:
         for line in fh:
             if limit is not None and len(rows) >= limit:
                 break

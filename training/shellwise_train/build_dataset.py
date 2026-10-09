@@ -71,7 +71,7 @@ def main(argv: list[str] | None = None) -> None:
     args.out.mkdir(parents=True, exist_ok=True)
     for name, rows in splits.items():
         rng.shuffle(rows)
-        with (args.out / f"{name}.jsonl").open("w") as fh:
+        with (args.out / f"{name}.jsonl").open("w", encoding="utf-8") as fh:
             for p in rows:
                 fh.write(json.dumps({"nl": p.nl, "cmd": p.cmd, "source": p.source}) + "\n")
 
@@ -86,7 +86,7 @@ def main(argv: list[str] | None = None) -> None:
             if not args.sources or s.name in args.sources
         ],
     }
-    (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(manifest, indent=2))
 
 

@@ -98,7 +98,7 @@ def main(argv: list[str] | None = None) -> None:
     report = score(rows, preds)
     report["seconds"] = round(elapsed, 1)
     args.out.mkdir(parents=True, exist_ok=True)
-    with (args.out / f"predictions-{args.split}.jsonl").open("w") as fh:
+    with (args.out / f"predictions-{args.split}.jsonl").open("w", encoding="utf-8") as fh:
         for row, pred in zip(rows, preds, strict=True):
             fh.write(
                 json.dumps(
@@ -111,7 +111,9 @@ def main(argv: list[str] | None = None) -> None:
                 )
                 + "\n"
             )
-    (args.out / f"metrics-{args.split}.json").write_text(json.dumps(report, indent=2) + "\n")
+    (args.out / f"metrics-{args.split}.json").write_text(
+        json.dumps(report, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, indent=2))
 
 

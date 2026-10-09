@@ -58,7 +58,7 @@ def main(argv: list[str] | None = None) -> None:
     if args.limit:
         subset = args.out / "train-subset.jsonl"
         args.out.mkdir(parents=True, exist_ok=True)
-        with train_path.open() as src, subset.open("w") as dst:
+        with train_path.open(encoding="utf-8") as src, subset.open("w", encoding="utf-8") as dst:
             for i, line in enumerate(src):
                 if i >= args.limit:
                     break
@@ -80,7 +80,7 @@ def main(argv: list[str] | None = None) -> None:
     summary = finetune(str(train_path), base, str(args.out), cfg, device=args.device)
     summary["seconds"] = round(time.time() - t0, 1)
     (args.out / "finetune_summary.json").write_text(
-        json.dumps(summary, indent=2, default=str) + "\n"
+        json.dumps(summary, indent=2, default=str) + "\n", encoding="utf-8"
     )
     print(json.dumps(summary, indent=2, default=str))
 

@@ -19,7 +19,8 @@
 # Defaults fit a 10 GB card such as an RTX 3080. With 16 GB or more, raise
 # ROUTER_MICRO_BATCH to 16 and ROUTER_GRAD_ACCUM to 2 for a faster run.
 #
-# Needs: Linux or macOS, git, curl, an NVIDIA driver for GPU runs. Everything
+# Needs: Linux or macOS, git, curl, an NVIDIA driver for GPU runs. On Windows
+# use WSL2 (Ubuntu); native Windows PyTorch wheels have no CUDA. Everything
 # else is installed into the repo directory. Outputs land in ./outputs and
 # logs in ./outputs/logs.
 
@@ -69,11 +70,13 @@ phase_setup() {
   timed "sync training env" bash -c "cd training && uv sync --python 3.12"
   timed "sync router env"   bash -c "cd router && uv sync --python 3.12"
   timed "verify torch sees the GPU" bash -c "cd training && uv run python -c '
-import torch
+import torch, sys
 dev = \"cuda\" if torch.cuda.is_available() else \"mps\" if torch.backends.mps.is_available() else \"cpu\"
 print(\"torch\", torch.__version__, \"device\", dev)
 if dev == \"cuda\":
     print(\"gpu\", torch.cuda.get_device_name(0), \"bf16\", torch.cuda.is_bf16_supported())
+elif dev == \"cpu\":
+    print(\"WARNING: no GPU visible to torch. Training on CPU takes days. On Windows, run this inside WSL2.\")
 '"
   timed "download base models" bash -c "cd training && uv run python -c '
 from huggingface_hub import snapshot_download

@@ -77,7 +77,11 @@ class ToolRouter:
     ):
         import laya
 
-        data = json.loads(Path(catalog).read_text()) if not isinstance(catalog, dict) else catalog
+        data = (
+            json.loads(Path(catalog).read_text(encoding="utf-8"))
+            if not isinstance(catalog, dict)
+            else catalog
+        )
         self.tools: dict[str, dict] = dict(data["tools"])
         for name, entry in (extra_tools or {}).items():  # plugin registrations
             self.tools[name] = {**entry, "common": True}

@@ -114,7 +114,7 @@ def first_util(cmd: str) -> str | None:
 def train_counts(path: Path | None) -> Counter:
     c: Counter = Counter()
     if path and path.exists():
-        with path.open() as fh:
+        with path.open(encoding="utf-8") as fh:
             for line in fh:
                 u = first_util(json.loads(line)["cmd"])
                 if u:
@@ -159,7 +159,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--common-min", type=int, default=5)
     args = ap.parse_args(argv)
     cat = build(args.train, args.include_extra, args.common_min)
-    args.out.write_text(json.dumps(cat, indent=1, sort_keys=True) + "\n")
+    args.out.write_text(json.dumps(cat, indent=1, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(cat["summary"], indent=1))
     print(f"{len(cat['tools'])} tools -> {args.out}")
 

@@ -64,13 +64,13 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--seed", type=int, default=13)
     args = ap.parse_args(argv)
 
-    tools = json.loads(args.catalog.read_text())["tools"]
+    tools = json.loads(args.catalog.read_text(encoding="utf-8"))["tools"]
     rng = random.Random(args.seed)
     args.out.mkdir(parents=True, exist_ok=True)
     for split in ("train", "val", "test"):
-        pairs = [json.loads(line) for line in (args.data / f"{split}.jsonl").open()]
+        pairs = [json.loads(line) for line in (args.data / f"{split}.jsonl").open(encoding="utf-8")]
         rows = build_rows(pairs, tools, args.cap if split == "train" else 10**9, rng)
-        with (args.out / f"{split}.jsonl").open("w") as fh:
+        with (args.out / f"{split}.jsonl").open("w", encoding="utf-8") as fh:
             for r in rows:
                 fh.write(json.dumps(r) + "\n")
         buckets = Counter(r["expected"]["bucket"] for r in rows)

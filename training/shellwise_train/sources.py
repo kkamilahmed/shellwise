@@ -43,7 +43,7 @@ def _load_nl2bash_parquet(files: dict[str, Path]) -> Iterator[Pair]:
 
 def _load_nl2bash_custom(files: dict[str, Path]) -> Iterator[Pair]:
     for path in files.values():
-        rows = json.loads(path.read_text())
+        rows = json.loads(path.read_text(encoding="utf-8"))
         for row in rows:
             yield Pair(str(row["nl_command"]), str(row["bash_code"]), "nl2bash-custom")
 
@@ -57,7 +57,7 @@ def _load_tldr(files: dict[str, Path]) -> Iterator[Pair]:
 
 def _load_prompt_response(files: dict[str, Path]) -> Iterator[Pair]:
     for path in files.values():
-        rows = json.loads(path.read_text())
+        rows = json.loads(path.read_text(encoding="utf-8"))
         for row in rows:
             yield Pair(str(row["prompt"]), str(row["response"]), "sysadmin-840")
 

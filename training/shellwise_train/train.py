@@ -185,7 +185,8 @@ def run(cfg: Config) -> None:
         json.dumps(
             {k: str(v) if isinstance(v, Path) else v for k, v in asdict(cfg).items()}, indent=2
         )
-        + "\n"
+        + "\n",
+        encoding="utf-8",
     )
     print(f"saved adapter to {cfg.out}")
 

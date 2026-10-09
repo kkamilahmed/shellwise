@@ -34,7 +34,7 @@ def main(argv: list[str] | None = None) -> None:
     router = ToolRouter(
         args.catalog, model=args.model, device=args.device, bucket_threshold=0.0, tool_threshold=0.0
     )
-    rows = [json.loads(line) for line in args.data.open()]
+    rows = [json.loads(line) for line in args.data.open(encoding="utf-8")]
     rows = [
         r for r in rows if (u := first_util(r["cmd"])) in router.tools and router.tools[u]["common"]
     ]
@@ -107,7 +107,9 @@ def main(argv: list[str] | None = None) -> None:
         },
         "top_confusions": [f"{a} -> {b} x{k}" for (a, b), k in confusions.most_common(12)],
     }
-    args.out.write_text(json.dumps({"report": report, "records": records}, indent=1) + "\n")
+    args.out.write_text(
+        json.dumps({"report": report, "records": records}, indent=1) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, indent=1))
 
 
