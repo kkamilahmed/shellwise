@@ -19,9 +19,10 @@
 # Defaults fit a 10 GB card such as an RTX 3080. With 16 GB or more, raise
 # ROUTER_MICRO_BATCH to 16 and ROUTER_GRAD_ACCUM to 2 for a faster run.
 #
-# Needs: Linux or macOS, git, curl, an NVIDIA driver for GPU runs. On Windows
-# use WSL2 (Ubuntu); native Windows PyTorch wheels have no CUDA. Everything
-# else is installed into the repo directory. Outputs land in ./outputs and
+# Needs: git, curl and an NVIDIA driver for GPU runs, on Linux, macOS or
+# Windows (run from Git Bash; the CUDA build of torch is selected
+# automatically there). Everything else is installed into the repo directory.
+#   ALLOW_CPU=1   continue even if torch sees no GPU Outputs land in ./outputs and
 # logs in ./outputs/logs.
 
 set -euo pipefail
@@ -76,8 +77,9 @@ print(\"torch\", torch.__version__, \"device\", dev)
 if dev == \"cuda\":
     print(\"gpu\", torch.cuda.get_device_name(0), \"bf16\", torch.cuda.is_bf16_supported())
 elif dev == \"cpu\":
-    print(\"WARNING: no GPU visible to torch. Training on CPU takes days. On Windows, run this inside WSL2.\")
-'"
+    print(\"no GPU visible to torch (build\", torch.__version__ + \"). Training on CPU would take days.\")
+    sys.exit(0 if \"${ALLOW_CPU:-}\" else 3)
+'" || die "torch cannot see a GPU. If the build above ends in +cpu, rerun ./scripts/gpu-run.sh setup after pulling the latest repo; set ALLOW_CPU=1 to proceed anyway"
   timed "download base models" bash -c "cd training && uv run python -c '
 from huggingface_hub import snapshot_download
 snapshot_download(\"Qwen/Qwen2.5-0.5B-Instruct\")

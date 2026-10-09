@@ -18,8 +18,8 @@ Grammar-constrained decoding guarantees every output is a valid command, and a p
 
 ## Reproduce on a GPU machine
 
-On a fresh Linux box with an NVIDIA driver, or any Mac, one script runs the whole pipeline.
-On Windows, run it inside WSL2 (Ubuntu): the plain Windows PyTorch wheels have no CUDA support, so a native run would silently train on the CPU.
+On a fresh Linux box with an NVIDIA driver, any Mac, or Windows from Git Bash, one script runs the whole pipeline.
+On Windows the projects pull the CUDA build of PyTorch from PyTorch's own index, since the PyPI wheels there are CPU-only, and the setup phase refuses to continue if torch cannot see a GPU.
 
 ```sh
 git clone https://github.com/kkamilahmed/shellwise && cd shellwise

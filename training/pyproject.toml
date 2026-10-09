@@ -40,3 +40,13 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+# PyPI's Windows wheels for torch are CPU-only. On Windows, take the CUDA 13
+# build from PyTorch's own index instead; Linux and macOS keep the PyPI wheel.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu130", marker = "sys_platform == 'win32'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
