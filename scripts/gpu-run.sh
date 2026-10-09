@@ -66,12 +66,20 @@ gpu_info() {
 phase_setup() {
   log "machine"
   gpu_info
+  export PATH="$HOME/.local/bin:${USERPROFILE:-$HOME}/.local/bin:$PATH"
   if ! command -v uv >/dev/null 2>&1; then
     log "installing uv"
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    export PATH="$HOME/.local/bin:$PATH"
+    case "$(uname -s)" in
+      MINGW*|MSYS*|CYGWIN*)
+        # Git Bash on Windows: the sh installer does not work here, use the Windows one.
+        powershell.exe -NoProfile -ExecutionPolicy ByPass -Command \
+          "irm https://astral.sh/uv/install.ps1 | iex" ;;
+      *)
+        curl -LsSf https://astral.sh/uv/install.sh | sh ;;
+    esac
+    hash -r 2>/dev/null || true
   fi
-  command -v uv >/dev/null 2>&1 || die "uv not on PATH after install; open a new shell and rerun"
+  command -v uv >/dev/null 2>&1 || die "uv is installed but not on PATH yet. Close this terminal, open a new one, and rerun"
   timed "sync training env" bash -c "cd training && uv sync --python 3.12"
   timed "sync router env"   bash -c "cd router && uv sync --python 3.12"
   timed "verify torch sees the GPU" bash -c "cd training && uv run python -c '
