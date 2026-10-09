@@ -17,8 +17,14 @@ def pick_device() -> torch.device:
 
 
 def pick_dtype(device: torch.device) -> torch.dtype:
-    # bf16 is only reliable on CUDA; MPS and CPU train/infer in fp32 at this model size.
-    return torch.bfloat16 if device.type == "cuda" else torch.float32
+    """bf16 on GPUs that support it natively (Ampere and newer); fp32 elsewhere.
+
+    Pre-Ampere cards emulate bf16 slowly, and MPS/CPU are safest in fp32 at this
+    model size, so anything else gets fp32.
+    """
+    if device.type == "cuda" and torch.cuda.is_bf16_supported():
+        return torch.bfloat16
+    return torch.float32
 
 
 def read_jsonl(path: Path, limit: int | None = None) -> list[dict]:

@@ -16,7 +16,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from .build_catalog import first_util
-from .router import ToolRouter
+from .router import DEFAULT_MODEL, ToolRouter
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -26,11 +26,14 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--per-tool", type=int, default=8)
     ap.add_argument("--limit", type=int)
     ap.add_argument("--device")
+    ap.add_argument("--model", default=DEFAULT_MODEL, help="hub id or fine-tuned checkpoint dir")
     ap.add_argument("--out", type=Path, default=Path("eval-router.json"))
     ap.add_argument("--seed", type=int, default=1)
     args = ap.parse_args(argv)
 
-    router = ToolRouter(args.catalog, device=args.device, bucket_threshold=0.0, tool_threshold=0.0)
+    router = ToolRouter(
+        args.catalog, model=args.model, device=args.device, bucket_threshold=0.0, tool_threshold=0.0
+    )
     rows = [json.loads(line) for line in args.data.open()]
     rows = [
         r for r in rows if (u := first_util(r["cmd"])) in router.tools and router.tools[u]["common"]

@@ -13,7 +13,25 @@ Grammar-constrained decoding guarantees every output is a valid command, and a p
 | `training/` | Python package: dataset build, LoRA fine-tune, evaluation, export (uv project) |
 | `data/` | Built `train/val/test.jsonl` (gitignored) and the committed `manifest.json` |
 | `router/` | Python package: two-stage tool router built on Laya, plus the tool catalog (uv project) |
+| `scripts/` | `gpu-run.sh`, the one-command reproduction script |
 | `engine/` | Rust inference engine (not started yet) |
+
+## Reproduce on a GPU machine
+
+On a fresh Linux box with an NVIDIA driver, or any Mac, one script runs the whole pipeline:
+
+```sh
+git clone https://github.com/kkamilahmed/shellwise && cd shellwise
+./scripts/gpu-run.sh all
+```
+
+It installs uv, creates both Python environments, downloads the base models, builds the data, trains the LLM and the router, evaluates both and exports the merged model.
+Phases can run on their own, for example `./scripts/gpu-run.sh setup data` then `./scripts/gpu-run.sh train-router`.
+Epochs and batch sizes are environment variables documented at the top of the script.
+Results land in `outputs/eval/metrics-test.json` and `outputs/eval-router.json`, with logs in `outputs/logs/`.
+
+Defaults fit a 10 GB card.
+Rough wall time for the default 4 epochs each: an RTX 3080 takes about 2 hours in total, an M1 Pro about 14 hours.
 
 ## Training pipeline
 
