@@ -22,7 +22,7 @@ def pick_dtype(device: torch.device) -> torch.dtype:
     Pre-Ampere cards emulate bf16 slowly, and MPS/CPU are safest in fp32 at this
     model size, so anything else gets fp32.
     """
-    if device.type == "cuda" and torch.cuda.is_bf16_supported():
+    if device.type == "cuda" and torch.cuda.is_bf16_supported(including_emulation=False):
         return torch.bfloat16
     return torch.float32
 
